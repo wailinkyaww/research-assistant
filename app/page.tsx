@@ -1,28 +1,21 @@
 'use client';
 
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import { useState } from 'react';
 
-type Message = {
-  role: 'user' | 'assistant';
-  content: string;
-};
-
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'user', content: 'Hello, how can you help me?' },
-    { role: 'assistant', content: 'I can help you with research and answer your questions. What would you like to know?' },
-  ]);
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/chat',
+    }),
+  });
   const [input, setInput] = useState('');
 
   const handleSend = () => {
-    if (input.trim()) {
-      setMessages([...messages, { role: 'user', content: input }]);
+    if (input.trim() && status === 'ready') {
+      sendMessage({ text: input });
       setInput('');
-
-      // Simulate assistant response
-      setTimeout(() => {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'This is a simulated response.' }]);
-      }, 500);
     }
   };
 
@@ -41,35 +34,69 @@ export default function Home() {
         <div className="flex flex-1 flex-col">
           {/* Chat Messages Area */}
           <div className="custom-scrollbar flex-1 overflow-y-auto p-6">
-            <div className="space-y-4">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[60%] rounded-2xl px-4 py-3 ${
-                      message.role === 'user'
-                        ? 'bg-zinc-700 text-zinc-100'
-                        : 'text-zinc-100'
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap">{message.content}</p>
-                  </div>
+            {messages.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center">
+                <h1 className="mb-8 text-3xl font-semibold text-zinc-100">
+                  Research Assistant
+                </h1>
+                <p className="mb-8 text-center text-zinc-400">
+                  Ask me anything and I&#39;ll help you research, summarize, and organize information
+                </p>
+                <div className="grid w-full max-w-2xl grid-cols-2 gap-3">
+                  {[
+                    'Summarize recent developments in quantum computing',
+                    'Compare pros and cons of React vs Vue',
+                    'Explain the causes of climate change',
+                    'Research best practices for remote team management',
+                  ].map((prompt, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setInput(prompt);
+                      }}
+                      className="rounded-xl border border-zinc-600 bg-zinc-700/50 p-4 text-left text-sm text-zinc-300 transition-colors hover:bg-zinc-700 hover:text-zinc-100"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[60%] px-4 py-3 ${
+                        message.role === 'user'
+                          ? 'bg-zinc-700 text-zinc-100 rounded-2xl rounded-br-none'
+                          : 'text-zinc-100 rounded-2xl'
+                      }`}
+                    >
+                      <p className="whitespace-pre-wrap">
+                        {message.parts.map((part, index) =>
+                          part.type === 'text' ? <span key={index}>{part.text}</span> : null
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Chat Input Box - Bottom */}
           <div className="bg-zinc-800 p-8">
             <textarea
-              className="w-full resize-none rounded-2xl border border-zinc-600 bg-zinc-700 p-4 text-zinc-100 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full resize-none rounded-2xl border border-zinc-600 bg-zinc-700 p-4 text-zinc-100 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
               placeholder="Ask anything..."
               rows={3}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
+              disabled={status !== 'ready'}
             />
           </div>
         </div>
