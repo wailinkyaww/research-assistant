@@ -54,7 +54,7 @@ export default function Home() {
                       onClick={() => {
                         setInput(prompt);
                       }}
-                      className="rounded-xl border border-zinc-600 bg-zinc-700/50 p-4 text-left text-sm text-zinc-300 transition-colors hover:bg-zinc-700 hover:text-zinc-100"
+                      className="flex items-start rounded-xl border border-zinc-600 bg-zinc-700/50 p-4 text-left text-sm text-zinc-300 transition-colors hover:bg-zinc-700 hover:text-zinc-100"
                     >
                       {prompt}
                     </button>
