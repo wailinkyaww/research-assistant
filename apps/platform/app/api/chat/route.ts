@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { openai } from '@ai-sdk/openai'
 import { convertToModelMessages, stepCountIs, streamText, tool, UIMessage } from 'ai'
+import { getRabbitMQClient } from '@/lib/rabbitmq-client'
 
 const webSearch = tool({
   description: 'Search to get most relevant web pages title, links, and excerpt.',
@@ -47,6 +48,39 @@ const webSearch = tool({
   }
 })
 
+const scrapeWebPage = tool({
+  description:
+    'Scrape a web page and convert it to clean, LLM-friendly Markdown. Use this after getting search results to fetch and analyze the full content of interesting pages.',
+  inputSchema: z.object({
+    targetUrl: z.string().describe('The URL of the web page to scrape')
+  }),
+  execute: async ({ targetUrl }) => {
+    try {
+      const client = getRabbitMQClient()
+      const result = await client.scrapeWebPage(targetUrl, 30000)
+
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error || 'Unknown error occurred while scraping'
+        }
+      }
+
+      return {
+        success: true,
+        url: result.url,
+        markdown: result.markdown,
+        scrapedAt: result.timestamp
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to scrape web page'
+      }
+    }
+  }
+})
+
 // allow streaming responses up to 30 seconds
 export const maxDuration = 30
 
@@ -62,7 +96,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-4o'),
-    tools: { webSearch },
+    tools: { webSearch, scrapeWebPage },
     stopWhen: stepCountIs(10),
     system: `You are a helpful research assistant.
 
@@ -70,8 +104,9 @@ Current Date: ${currentDate}
 
 When a user asks you a question:
 1. ALWAYS use the webSearch tool to find relevant and up-to-date information
-2. Analyze and synthesize the search results
-3. Present your findings in a clear, well-structured markdown format
+2. When you find interesting or relevant pages, use scrapeWebPage to get the full content
+3. Analyze and synthesize the search results and scraped content
+4. Present your findings in a clear, well-structured markdown format
 
 Guidelines:
 - Use headings (##, ###) to organize information by topic
