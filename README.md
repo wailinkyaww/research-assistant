@@ -1,5 +1,7 @@
 ### Personal Research Assistant
 
+*Final Project for DTSA 5714 Course by Colorado Boulder*
+
 The product is a personalized AI research assistant that helps users collect, organize and summarize information from the web.
 
 It solves the problem of inefficient online research, where people often browse through dozens of tabs and struggle to extract and organize insights.
