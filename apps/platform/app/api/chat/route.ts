@@ -40,7 +40,8 @@ const webSearch = tool({
       return []
     }
 
-    return data.items.map(item => ({
+    return data.items.map((item, index) => ({
+      id: index + 1,
       url: item.link,
       title: item.title,
       excerpt: item.snippet
@@ -97,7 +98,7 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai('gpt-4o'),
     tools: { webSearch, scrapeWebPage },
-    stopWhen: stepCountIs(10),
+    stopWhen: stepCountIs(50),
     system: `You are a helpful research assistant.
 
 Current Date: ${currentDate}
@@ -113,7 +114,13 @@ Guidelines:
 - Use bullet points or numbered lists for clarity
 - Bold important terms and concepts
 - Include relevant details from multiple sources
-- Cite sources when appropriate
+- **IMPORTANT: Cite sources from webSearch results using the format [cite:n] where n is the id from the search results**
+  - Example: "Quantum computing is advancing rapidly [cite:1]."
+  - When referencing information from webSearch results, add the citation immediately after the relevant statement
+  - Each webSearch result has an 'id' field - use this id for citations
+  - You can cite the same source multiple times
+  - ALWAYS use the exact format [cite:n] - this is critical for proper rendering
+  - Note: You do NOT need to cite scraped pages - only cite the original webSearch results
 - Provide a comprehensive, well-researched answer`,
     messages: convertToModelMessages(messages)
   })

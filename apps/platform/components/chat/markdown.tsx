@@ -1,12 +1,61 @@
+import { JSX } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 interface MarkdownProps {
   content: string
   className?: string
+  citations?: Record<number, { url: string; title: string }>
 }
 
-export function Markdown({ content, className }: MarkdownProps) {
+export function Markdown({ content, className, citations = {} }: MarkdownProps) {
+  const renderTextWithCitations = (text: string) => {
+    if (!citations || Object.keys(citations).length === 0) {
+      return text
+    }
+
+    const parts: (string | JSX.Element)[] = []
+    let lastIndex = 0
+    const citationRegex = /\[cite:(\d+)\]/g
+    let match
+
+    while ((match = citationRegex.exec(text)) !== null) {
+      const citationNum = parseInt(match[1])
+
+      // Add text before citation
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index))
+      }
+
+      // Add citation link
+      if (citations[citationNum]) {
+        parts.push(
+          <sup key={`cite-${match.index}`}>
+            <a
+              href={citations[citationNum].url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 no-underline"
+              title={citations[citationNum].title}>
+              [{match[1]}]
+            </a>
+          </sup>
+        )
+      } else {
+        parts.push(match[0])
+      }
+
+      lastIndex = match.index + match[0].length
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex))
+    }
+
+    return parts.length > 0 ? parts : text
+  }
+
   return (
     <div className={className}>
       <ReactMarkdown
@@ -35,6 +84,11 @@ export function Markdown({ content, className }: MarkdownProps) {
             {children}
           </p>
         ),
+        // Custom text renderer to handle citations
+        // @ts-ignore
+        text: ({ node, value, ...props }) => {
+          return <>{renderTextWithCitations(value)}</>
+        },
         ul: ({ node, children, ...props }) => (
           <ul className="ml-6 list-disc space-y-1 my-2 text-sm" {...props}>
             {children}
