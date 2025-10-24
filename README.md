@@ -21,8 +21,8 @@ The actual implementation simplifies services from the initial design.
 
 **Next.js Edge Runtime**
 
-Hosts both the AI agent and backend API.
-Handles web search directly using Google Custom Search API. 
+Hosts both the AI agent and backend API. <br/>
+Handles web search directly using Google Custom Search API. <br/>
 This eliminates the need for a separate Data Collector service for search operations.
 
 **Next.js Frontend**
@@ -31,7 +31,7 @@ Simple for user interactions (unchanged from initial design).
 
 **Web Scraping Service**
 
-As Data Collector now only have the job to scrape the web pages, this is merged to data analyzer.
+As Data Collector now only have the job to scrape the web pages, this is merged to data analyzer. <br/>
 And we named it web scraping service.  It handles:
 - Web scraping (fetching HTML from URLs)
 - Content cleaning and pre-processing
@@ -39,10 +39,12 @@ And we named it web scraping service.  It handles:
 
 **Open AI API**
 
-OpenAI GPT-4o for large language model. Due to time constraint, I didn't apply the use of visual language model.
+OpenAI GPT-4o for large language model. <br/>
+Due to time constraint, I didn't apply the use of visual language model. <br/>
 If we ever gets a chance, this will greatly improve while analyzing the web pages for LLM.
 
 **Message Queue**
 
-RabbitMQ for `async` communication between the Edge Runtime and Web Scraper service.
-I didn't setup with docker or docker-compose as it doesn't add much value. Instead, I use a free cloud instance offered by https://cloudamqp.com
+RabbitMQ for `async` communication between the Edge Runtime and Web Scraper service. <br/>
+I didn't setup with docker or docker-compose as it doesn't add much value. <br/>
+Instead, I use a free cloud instance offered by https://cloudamqp.com
