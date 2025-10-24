@@ -1,6 +1,7 @@
-import { JSX } from 'react'
+import { useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 
 interface MarkdownProps {
   content: string
@@ -9,61 +10,36 @@ interface MarkdownProps {
 }
 
 export function Markdown({ content, className, citations = {} }: MarkdownProps) {
-  const renderTextWithCitations = (text: string) => {
+  // Pre-process content to replace [cite:n] with HTML
+  const processedContent = useMemo(() => {
     if (!citations || Object.keys(citations).length === 0) {
-      return text
+      return content
     }
 
-    const parts: (string | JSX.Element)[] = []
-    let lastIndex = 0
-    const citationRegex = /\[cite:(\d+)\]/g
-    let match
-
-    while ((match = citationRegex.exec(text)) !== null) {
-      const citationNum = parseInt(match[1])
-
-      // Add text before citation
-      if (match.index > lastIndex) {
-        parts.push(text.substring(lastIndex, match.index))
-      }
-
-      // Add citation link
+    return content.replace(/\[cite:(\d+)\]/g, (match, num) => {
+      const citationNum = parseInt(num)
       if (citations[citationNum]) {
-        parts.push(
-          <sup key={`cite-${match.index}`}>
-            <a
-              href={citations[citationNum].url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 no-underline"
-              title={citations[citationNum].title}>
-              [{match[1]}]
-            </a>
-          </sup>
-        )
-      } else {
-        parts.push(match[0])
+        const escapedTitle = citations[citationNum].title.replace(/"/g, '&quot;')
+        const escapedUrl = citations[citationNum].url
+        return `<sup><a href="${escapedUrl}" target="_blank" rel="noopener noreferrer" class="citation-link" title="${escapedTitle}">[${num}]</a></sup>`
       }
-
-      lastIndex = match.index + match[0].length
-    }
-
-    // Add remaining text
-    if (lastIndex < text.length) {
-      parts.push(text.substring(lastIndex))
-    }
-
-    return parts.length > 0 ? parts : text
-  }
+      return match
+    })
+  }, [content, citations])
 
   return (
     <div className={className}>
       <ReactMarkdown
       remarkPlugins={[remarkGfm]}
+      rehypePlugins={[rehypeRaw]}
       components={{
-        a: ({ node, ...props }) => (
-          <a className="font-semibold text-blue-400 hover:text-blue-300" target="_blank" {...props} />
-        ),
+        a: ({ node, ...props }) => {
+          // Check if this is a citation link
+          if (props.className === 'citation-link') {
+            return <a className="text-blue-400 hover:text-blue-300 no-underline" {...props} />
+          }
+          return <a className="font-semibold text-blue-400 hover:text-blue-300" target="_blank" {...props} />
+        },
         h1: ({ node, children, ...props }) => (
           <h1 className="mt-4 mb-2 font-semibold text-xl" {...props}>
             {children}
@@ -84,11 +60,6 @@ export function Markdown({ content, className, citations = {} }: MarkdownProps) 
             {children}
           </p>
         ),
-        // Custom text renderer to handle citations
-        // @ts-ignore
-        text: ({ node, value, ...props }) => {
-          return <>{renderTextWithCitations(value)}</>
-        },
         ul: ({ node, children, ...props }) => (
           <ul className="ml-6 list-disc space-y-1 my-2 text-sm" {...props}>
             {children}
@@ -145,7 +116,7 @@ export function Markdown({ content, className, citations = {} }: MarkdownProps) 
         )
       }}
     >
-      {content}
+      {processedContent}
     </ReactMarkdown>
     </div>
   )
