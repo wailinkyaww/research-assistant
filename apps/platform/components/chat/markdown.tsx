@@ -2,12 +2,14 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 interface MarkdownProps {
-  content: string;
+  content: string
+  className?: string
 }
 
-export function Markdown({ content }: MarkdownProps) {
+export function Markdown({ content, className }: MarkdownProps) {
   return (
-    <ReactMarkdown
+    <div className={className}>
+      <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
         a: ({ node, ...props }) => (
@@ -91,5 +93,6 @@ export function Markdown({ content }: MarkdownProps) {
     >
       {content}
     </ReactMarkdown>
+    </div>
   )
 }
