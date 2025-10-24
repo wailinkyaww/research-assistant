@@ -1,6 +1,6 @@
 # Web Scraper Service
 
-A RabbitMQ-based web scraper service that converts HTML pages to clean, LLM-friendly Markdown.
+A RabbitMQ-based web scraper service that converts web pages to clean, LLM-friendly Markdown.
 
 ## Features
 
@@ -14,7 +14,7 @@ A RabbitMQ-based web scraper service that converts HTML pages to clean, LLM-frie
 ## Installation
 
 ```bash
-npm install
+bun install
 ```
 
 ## Configuration
@@ -25,6 +25,8 @@ Create a `.env` file based on `.env.example`:
 cp .env.example .env
 ```
 
+*You can get a free cluster at -*  cloudamqp.com
+
 Edit the `.env` file with your RabbitMQ configuration:
 
 ```env
@@ -33,26 +35,24 @@ RABBITMQ_QUEUE_INPUT=scraper-requests
 RABBITMQ_QUEUE_OUTPUT=scraper-results
 ```
 
-## Usage
-
-### Development Mode
+### Development
 
 ```bash
-npm run dev
+bun run dev
 ```
 
-### Production Mode
+### Production Build
 
 Build and run:
 
 ```bash
-npm run build
-npm start
+bun run build
+bun start
 ```
 
-## Message Format
+---
 
-### Input Message (Request)
+### Input Message Format (Request)
 
 The service accepts messages in two formats:
 
@@ -69,7 +69,7 @@ https://example.com
 }
 ```
 
-### Output Message (Response)
+### Output Message Format (Response)
 
 The service sends back a JSON response:
 
@@ -96,9 +96,9 @@ In case of errors:
 }
 ```
 
-## RabbitMQ Patterns
+---
 
-### Direct Queue Pattern
+### RabbitMQ - Direct Queue Pattern
 
 Send messages to `scraper-requests` queue, receive results from `scraper-results` queue.
 

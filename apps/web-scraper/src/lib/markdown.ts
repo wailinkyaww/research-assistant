@@ -63,7 +63,7 @@ function simplifyHtml(html: string, keepAttr = false): string {
       }
     })
 
-  // Remove all attributes if keepAttr is false
+  // remove all attributes if keepAttr is false
   if (!keepAttr) {
     $('*').each((_, el) => {
       if ('attribs' in el && el.attribs) {
@@ -74,10 +74,10 @@ function simplifyHtml(html: string, keepAttr = false): string {
     })
   }
 
-  // Remove href attributes from <a> tags
+  // remove href attributes from <a> tags
   $('a').removeAttr('href')
 
-  // Remove empty tags
+  // remove empty tags
   let removed = true
   while (removed) {
     removed = false
@@ -89,7 +89,7 @@ function simplifyHtml(html: string, keepAttr = false): string {
     })
   }
 
-  // Flatten redundant tags (if only one child and text is same)
+  // flatten redundant tags (if only one child and text is same)
   $('*').each((_, el) => {
     const $el = $(el)
     const children = $el.children()
@@ -102,7 +102,7 @@ function simplifyHtml(html: string, keepAttr = false): string {
     }
   })
 
-  // Remove empty lines
+  // remove empty lines
   return $.html()
     .split('\n')
     .map(line => line.trim())
