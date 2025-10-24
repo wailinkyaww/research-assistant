@@ -3,6 +3,8 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useState } from 'react';
+import { Messages } from '@/components/chat/messages';
+import { SuggestedPrompts } from '@/components/chat/suggested-prompts';
 
 export default function Home() {
   const { messages, sendMessage, status } = useChat({
@@ -35,55 +37,9 @@ export default function Home() {
           {/* Chat Messages Area */}
           <div className="custom-scrollbar flex-1 overflow-y-auto p-6">
             {messages.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center">
-                <h1 className="mb-8 text-3xl font-semibold text-zinc-100">
-                  Research Assistant
-                </h1>
-                <p className="mb-8 text-center text-zinc-400">
-                  Ask me anything and I&#39;ll help you research, summarize, and organize information
-                </p>
-                <div className="grid w-full max-w-2xl grid-cols-2 gap-3">
-                  {[
-                    'Summarize recent developments in quantum computing',
-                    'Compare pros and cons of React vs Vue',
-                    'Explain the causes of climate change',
-                    'Research best practices for remote team management',
-                  ].map((prompt, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setInput(prompt);
-                      }}
-                      className="flex items-start rounded-xl border border-zinc-600 bg-zinc-700/50 p-4 text-left text-sm text-zinc-300 transition-colors hover:bg-zinc-700 hover:text-zinc-100"
-                    >
-                      {prompt}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <SuggestedPrompts onPromptClick={setInput} />
             ) : (
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[60%] px-4 py-3 ${
-                        message.role === 'user'
-                          ? 'bg-zinc-700 text-zinc-100 rounded-2xl rounded-br-none'
-                          : 'text-zinc-100 rounded-2xl'
-                      }`}
-                    >
-                      <p className="whitespace-pre-wrap">
-                        {message.parts.map((part, index) =>
-                          part.type === 'text' ? <span key={index}>{part.text}</span> : null
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Messages messages={messages} />
             )}
           </div>
 

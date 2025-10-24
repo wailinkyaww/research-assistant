@@ -13,7 +13,7 @@ const webSearch = tool({
     const searchEngineId = process.env.GOOGLE_SEARCH_ENGINE_ID
 
     if (!apiKey || !searchEngineId) {
-      throw new Error('Google Search API credentials not configured')
+      return 'Error: Search API credentials not configured!'
     }
 
     const url = new URL('https://www.googleapis.com/customsearch/v1')
