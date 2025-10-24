@@ -10,29 +10,39 @@ Targeted at students, researchers, and knowledge workers, the tool uses large la
 
 ----
 
-#### Initial Architecture 
+#### White Board Architecture 
 
 Here is the diagram of the architecture that I initially thought of:
 ![Architecture Diagram](./assets/whiteboard-architecture.png)
 
-#### Final Architecture
+#### Consolidated Architecture
 
-The actual implementation differs from the initial design:
+The actual implementation simplifies services from the initial design.
 
-**Simplified Services:**
-- **Next.js Edge Runtime**: Hosts both the AI agent and backend API. Handles web search directly using Google Custom Search API, eliminating the need for a separate Data Collector service for search operations.
-- **Next.js Frontend**: Web interface for user interactions (unchanged from initial design).
-- **Web Scraper Service**: A standalone TypeScript/Node.js service that combines the functionality of the original Data Analyzer and Data Collector. It handles:
-  - Web scraping (fetching HTML from URLs)
-  - Content cleaning and pre-processing
-  - HTML-to-Markdown conversion for LLM consumption
+**Next.js Edge Runtime**
 
-**Technology Stack:**
-- **LLM**: OpenAI GPT-4o for natural language understanding and response generation
-- **Search**: Google Custom Search API integrated directly into the Edge Runtime
-- **Message Queue**: RabbitMQ (via CloudAMQP free cloud instance) for asynchronous communication between the Edge Runtime and Web Scraper service
+Hosts both the AI agent and backend API.
+Handles web search directly using Google Custom Search API. 
+This eliminates the need for a separate Data Collector service for search operations.
 
-**Key Architectural Decisions:**
-1. Web search was moved to Edge Runtime because Google Custom Search API is lightweight and doesn't require heavy processing infrastructure
-2. Data Analyzer and Data Collector were merged into a single Web Scraper service, as both deal with web content processing
-3. RabbitMQ provides reliable async communication, allowing the web scraper to handle time-intensive operations without blocking the main API
+**Next.js Frontend**
+
+Simple for user interactions (unchanged from initial design).
+
+**Web Scraping Service**
+
+As Data Collector now only have the job to scrape the web pages, this is merged to data analyzer.
+And we named it web scraping service.  It handles:
+- Web scraping (fetching HTML from URLs)
+- Content cleaning and pre-processing
+- HTML-to-Markdown conversion for LLM consumption
+
+**Open AI API**
+
+OpenAI GPT-4o for large language model. Due to time constraint, I didn't apply the use of visual language model.
+If we ever gets a chance, this will greatly improve while analyzing the web pages for LLM.
+
+**Message Queue**
+
+RabbitMQ for `async` communication between the Edge Runtime and Web Scraper service.
+I didn't setup with docker or docker-compose as it doesn't add much value. Instead, I use a free cloud instance offered by https://cloudamqp.com
