@@ -1,4 +1,5 @@
 import { UIMessage } from 'ai'
+import { Markdown } from './markdown'
 
 interface MessagesProps {
   messages: UIMessage[];
@@ -23,14 +24,15 @@ function UserMessage({ message }: MessageProps) {
 }
 
 function AssistantMessage({ message }: MessageProps) {
+  const textContent = message.parts
+    .filter((part) => part.type === 'text')
+    .map((part) => part.text)
+    .join('')
+
   return (
     <div className="flex justify-start">
       <div className="max-w-[60%] px-4 py-3 text-zinc-100 rounded-2xl">
-        <p className="whitespace-pre-wrap">
-          {message.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null
-          )}
-        </p>
+        <Markdown content={textContent} />
       </div>
     </div>
   )
