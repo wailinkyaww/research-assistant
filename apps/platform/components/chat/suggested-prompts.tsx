@@ -11,8 +11,8 @@ export function SuggestedPrompts({ onPromptClick }: SuggestedPromptsProps) {
   ];
 
   return (
-    <div className="flex h-full flex-col items-center justify-center">
-      <h1 className="mb-8 text-3xl font-semibold text-zinc-100">
+    <div className="flex flex-col items-center justify-center">
+      <h1 className="mb-4 text-3xl font-semibold text-zinc-100">
         Research Assistant
       </h1>
       <p className="mb-8 text-center text-zinc-400">

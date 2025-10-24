@@ -1,21 +1,14 @@
 'use client'
 
-import { DefaultChatTransport } from 'ai'
-
-import { useChat } from '@ai-sdk/react'
 import { useState } from 'react'
 
 import { Messages } from './messages'
 import { SuggestedPrompts } from './suggested-prompts'
 import { ChatInputBox } from './chat-input-box'
+import { useChat } from '@ai-sdk/react'
 
-
-export function ChatPanel() {
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
-      api: '/api/chat'
-    })
-  })
+export function ChatPanel({ chat }: { chat: ReturnType<typeof useChat> }) {
+  const { messages, sendMessage, status } = chat
   const [input, setInput] = useState('')
 
   const handleSend = () => {
@@ -26,21 +19,27 @@ export function ChatPanel() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="custom-scrollbar flex-1 overflow-y-auto p-6">
+    <div className="flex h-full flex-col">
+      <div className="custom-scrollbar flex-1 overflow-y-auto">
         {messages.length === 0 ? (
-          <SuggestedPrompts onPromptClick={setInput} />
+          <div className="flex h-full items-center justify-center p-6">
+            <SuggestedPrompts onPromptClick={setInput} />
+          </div>
         ) : (
-          <Messages messages={messages} />
+          <div className="p-6">
+            <Messages messages={messages} />
+          </div>
         )}
       </div>
 
-      <ChatInputBox
-        value={input}
-        onChange={setInput}
-        onSend={handleSend}
-        disabled={status !== 'ready'}
-      />
+      <div className="border-t border-zinc-700">
+        <ChatInputBox
+          value={input}
+          onChange={setInput}
+          onSend={handleSend}
+          disabled={status !== 'ready'}
+        />
+      </div>
     </div>
   )
 }
