@@ -2,20 +2,27 @@
 
 ### Personal Research Assistant
 
-The product is a personalized AI research assistant that helps users collect, organize and summarize information from the web.
+The product is a personalized AI research assistant that helps users collect, organize and summarize information from
+the web.
 
-It solves the problem of inefficient online research, where people often browse through dozens of tabs and struggle to extract and organize insights.
+It solves the problem of inefficient online research, where people often browse through dozens of tabs and struggle to
+extract and organize insights.
 
-The product will allow the users to submit a query, which will trigger an automated pipeline that scrapes data from online sources, filters and analyzes it, and returns the structured summaries.
+The product will allow the users to submit a query, which will trigger an automated pipeline that scrapes data from
+online sources, filters and analyzes it, and returns the structured summaries.
 
-Targeted at students, researchers, and knowledge workers, the tool uses large language models to generate concise, and context-aware answers. Unlike traditional search engines, it provides unified, high-quality insights instead of scattered results.
+Targeted at students, researchers, and knowledge workers, the tool uses large language models to generate concise, and
+context-aware answers. Unlike traditional search engines, it provides unified, high-quality insights instead of
+scattered results.
 
 ----
 
-#### White Board Architecture 
+#### White Board Architecture
 
 Here is the diagram of the architecture that I initially thought of:
 ![Architecture Diagram](./assets/whiteboard-architecture.png)
+
+----
 
 #### Consolidated Architecture
 
@@ -34,7 +41,8 @@ Simple for user interactions (unchanged from initial design).
 **Web Scraping Service**
 
 As Data Collector now only have the job to scrape the web pages, this is merged to data analyzer. <br/>
-And we named it web scraping service.  It handles:
+And we named it web scraping service. It handles:
+
 - Web scraping (fetching HTML from URLs)
 - Content cleaning and pre-processing
 - HTML-to-Markdown conversion for LLM consumption
