@@ -15,9 +15,7 @@ Targeted at students, researchers, and knowledge workers, the tool uses large la
 context-aware answers. Unlike traditional search engines, it provides unified, high-quality insights instead of
 scattered results.
 
-<video width="500" height="281" controls>
-  <source src="./assets/demo.mov" type="video/mp4">
-</video>
+![](./assets/demo.mov)
 
 ----
 
