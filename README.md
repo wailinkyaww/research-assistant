@@ -15,6 +15,8 @@ Targeted at students, researchers, and knowledge workers, the tool uses large la
 context-aware answers. Unlike traditional search engines, it provides unified, high-quality insights instead of
 scattered results.
 
+https://github.com/user-attachments/assets/4ada30c5-bb90-4395-91b6-9b4282a7074b
+
 ----
 
 #### White Board Architecture
