@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Messages } from './messages'
 import { SuggestedPrompts } from './suggested-prompts'
 import { ChatInputBox } from './chat-input-box'
+import { TypingIndicator } from './typing-indicator'
 import { useChat } from '@ai-sdk/react'
 
 export function ChatPanel({ chat }: { chat: ReturnType<typeof useChat> }) {
@@ -28,6 +29,10 @@ export function ChatPanel({ chat }: { chat: ReturnType<typeof useChat> }) {
         ) : (
           <div className="p-6">
             <Messages messages={messages} />
+
+            {status === 'submitted' && (
+              <TypingIndicator />
+            )}
           </div>
         )}
       </div>
