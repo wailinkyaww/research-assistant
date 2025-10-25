@@ -15,7 +15,7 @@ Targeted at students, researchers, and knowledge workers, the tool uses large la
 context-aware answers. Unlike traditional search engines, it provides unified, high-quality insights instead of
 scattered results.
 
-![](./assets/demo.mov)
+https://github.com/wailinkyaww/research-assistant/blob/master/assets/demo.mov
 
 ----
 
